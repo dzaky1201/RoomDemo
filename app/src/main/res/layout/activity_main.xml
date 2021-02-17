@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+        <variable
+            name="viewmodel"
+            type="com.dzakyhdr.roomdemo.SubscriberViewModel" />
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        tools:context=".MainActivity">
+
+        <EditText
+            android:id="@+id/edt_name"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_margin="16dp"
+            android:ems="10"
+            android:hint="Subscriber name"
+            android:inputType="textPersonName"
+            android:text="@={viewmodel.inputName}"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <EditText
+            android:id="@+id/edt_email"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:ems="10"
+            android:hint="Subsciber email"
+            android:inputType="textPersonName"
+            android:text="@={viewmodel.inputEmail}"
+            app:layout_constraintEnd_toEndOf="@+id/edt_name"
+            app:layout_constraintStart_toStartOf="@+id/edt_name"
+            app:layout_constraintTop_toBottomOf="@+id/edt_name" />
+
+        <Button
+            android:id="@+id/btn_delete"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:onClick="@{()->viewmodel.clearAllOrDelete()}"
+            android:text="@={viewmodel.clearAllOrDeleteButton}"
+            app:layout_constraintStart_toStartOf="@+id/edt_email"
+            app:layout_constraintTop_toBottomOf="@+id/edt_email" />
+
+        <Button
+            android:id="@+id/btn_add"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:onClick="@{()->viewmodel.saveOrUpdate()}"
+            android:text="@={viewmodel.saveOrUpdateButton}"
+            app:layout_constraintEnd_toEndOf="@+id/edt_email"
+            app:layout_constraintTop_toTopOf="@+id/btn_delete" />
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/rv_subscriber"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginBottom="8dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="@+id/btn_add"
+            app:layout_constraintStart_toStartOf="@+id/btn_delete"
+            app:layout_constraintTop_toBottomOf="@+id/btn_delete" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>
