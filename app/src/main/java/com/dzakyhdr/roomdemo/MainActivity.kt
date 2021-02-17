@@ -4,6 +4,7 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
 import androidx.lifecycle.ViewModelProvider
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.dzakyhdr.roomdemo.databinding.ActivityMainBinding
 import com.dzakyhdr.roomdemo.db.SubscriberDAO
 import com.dzakyhdr.roomdemo.db.SubscriberDatabase
@@ -30,12 +31,15 @@ class MainActivity : AppCompatActivity() {
         // assign livedata to databinding
         binding.lifecycleOwner = this
 
+        initRecyclerView()
+    }
+    private fun initRecyclerView(){
+        binding.rvSubscriber.layoutManager = LinearLayoutManager(this)
         displayData()
     }
-
     private fun displayData(){
         viewModel.subscriber.observe(this, {
-            Log.i("MyTag", it.toString())
+           binding.rvSubscriber.adapter = RVAdapter(it)
         })
     }
 }
