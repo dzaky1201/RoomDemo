@@ -2,6 +2,7 @@ package com.dzakyhdr.roomdemo
 
 import androidx.databinding.Bindable
 import androidx.databinding.Observable
+import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -13,6 +14,9 @@ class SubscriberViewModel(private val repository: SubscriberRepository) : ViewMo
     val subscriber = repository.subscriber
     private var isUpdateOrDelete = false
     private lateinit var subscriberToUpdateOrDelete: Subscriber
+    private val statusMessage = MutableLiveData<Event<String>>()
+    val message: LiveData<Event<String>>
+        get() = statusMessage
 
     @Bindable
     val inputName = MutableLiveData<String>()
@@ -57,6 +61,7 @@ class SubscriberViewModel(private val repository: SubscriberRepository) : ViewMo
     private fun insert(subscriber: Subscriber) {
         viewModelScope.launch {
             repository.insert(subscriber)
+            statusMessage.value = Event("Berhasil Ditambahkan")
         }
     }
 
@@ -66,6 +71,7 @@ class SubscriberViewModel(private val repository: SubscriberRepository) : ViewMo
             inputEmail.value = null
             inputName.value = null
             isUpdateOrDelete = false
+            statusMessage.value = Event("Data Behasil Di Hapus")
 
             saveOrUpdateButton.value = "Save"
             clearAllOrDeleteButton.value = "Delete All"
@@ -78,15 +84,18 @@ class SubscriberViewModel(private val repository: SubscriberRepository) : ViewMo
             inputEmail.value = null
             inputName.value = null
             isUpdateOrDelete = false
+            statusMessage.value = Event("Data Berhasil DiUpdate")
 
             saveOrUpdateButton.value = "Save"
             clearAllOrDeleteButton.value = "Delete All"
+
         }
     }
 
     fun clearAll() {
         viewModelScope.launch {
             repository.deleteAll()
+            statusMessage.value = Event("Data Berhasil Dihapus semua")
         }
     }
 

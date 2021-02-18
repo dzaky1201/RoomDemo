@@ -33,6 +33,12 @@ class MainActivity : AppCompatActivity() {
         // assign livedata to databinding
         binding.lifecycleOwner = this
 
+        viewModel.message.observe(this, {
+            it.getContentIfNotHandled()?.let {
+                Toast.makeText(this, it, Toast.LENGTH_SHORT).show()
+            }
+        })
+
         initRecyclerView()
     }
 
@@ -52,7 +58,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun listItemClicked(subscriber: Subscriber) {
-        Toast.makeText(this, "you clicked name ${subscriber.name}", Toast.LENGTH_SHORT).show()
+//        Toast.makeText(this, "you clicked name ${subscriber.name}", Toast.LENGTH_SHORT).show()
         viewModel.initUpdateAndDelete(subscriber)
     }
 }
