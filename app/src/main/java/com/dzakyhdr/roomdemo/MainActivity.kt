@@ -18,6 +18,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var repository: SubscriberRepository
     private lateinit var factory: ViewModelFactory
     private lateinit var viewModel: SubscriberViewModel
+    private lateinit var adapter: RVAdapter
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -44,16 +45,17 @@ class MainActivity : AppCompatActivity() {
 
     private fun initRecyclerView() {
         binding.rvSubscriber.layoutManager = LinearLayoutManager(this)
+        adapter = RVAdapter { selectedItem: Subscriber ->
+            listItemClicked(selectedItem)
+        }
+        binding.rvSubscriber.adapter = adapter
         displayData()
     }
 
     private fun displayData() {
         viewModel.subscriber.observe(this, {
-            binding.rvSubscriber.adapter = RVAdapter(it) { selectedItem: Subscriber ->
-                listItemClicked(
-                    selectedItem
-                )
-            }
+            adapter.setList(it)
+            adapter.notifyDataSetChanged()
         })
     }
 

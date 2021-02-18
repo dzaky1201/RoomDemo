@@ -1,5 +1,6 @@
 package com.dzakyhdr.roomdemo
 
+import android.util.Patterns
 import androidx.databinding.Bindable
 import androidx.databinding.Observable
 import androidx.lifecycle.LiveData
@@ -36,17 +37,25 @@ class SubscriberViewModel(private val repository: SubscriberRepository) : ViewMo
     }
 
     fun saveOrUpdate() {
-        if (isUpdateOrDelete) {
-            subscriberToUpdateOrDelete.name = inputName.value!!
-            subscriberToUpdateOrDelete.email = inputEmail.value!!
-            update(subscriberToUpdateOrDelete)
+        if (inputName.value.isNullOrEmpty()) {
+            statusMessage.value = Event("Nama Wajib Di isi")
+        } else if (inputEmail.value.isNullOrEmpty()) {
+            statusMessage.value = Event("Nama Wajib Di isi")
+        } else if (!Patterns.EMAIL_ADDRESS.matcher(inputEmail.value!!).matches()) {
+            statusMessage.value = Event("Format Email Salah")
         } else {
-            val name = inputName.value!!
-            val email = inputEmail.value!!
-            insert(Subscriber(0, name, email))
+            if (isUpdateOrDelete) {
+                subscriberToUpdateOrDelete.name = inputName.value!!
+                subscriberToUpdateOrDelete.email = inputEmail.value!!
+                update(subscriberToUpdateOrDelete)
+            } else {
+                val name = inputName.value!!
+                val email = inputEmail.value!!
+                insert(Subscriber(0, name, email))
 
-            inputName.value = null
-            inputEmail.value = null
+                inputName.value = null
+                inputEmail.value = null
+            }
         }
     }
 
@@ -60,42 +69,59 @@ class SubscriberViewModel(private val repository: SubscriberRepository) : ViewMo
 
     private fun insert(subscriber: Subscriber) {
         viewModelScope.launch {
-            repository.insert(subscriber)
-            statusMessage.value = Event("Berhasil Ditambahkan")
+            val newRowId = repository.insert(subscriber)
+            if (newRowId > -1) {
+                statusMessage.value = Event("$newRowId Berhasil Ditambahkan")
+            } else {
+                statusMessage.value = Event("Error Saat Menambahka data")
+            }
         }
     }
 
     fun delete(subscriber: Subscriber) {
         viewModelScope.launch {
-            repository.delete(subscriber)
-            inputEmail.value = null
-            inputName.value = null
-            isUpdateOrDelete = false
-            statusMessage.value = Event("Data Behasil Di Hapus")
+            val noOfRow = repository.delete(subscriber)
+            if (noOfRow > 0) {
+                inputEmail.value = null
+                inputName.value = null
+                isUpdateOrDelete = false
+                statusMessage.value = Event("Data Behasil Di Hapus")
 
-            saveOrUpdateButton.value = "Save"
-            clearAllOrDeleteButton.value = "Delete All"
+                saveOrUpdateButton.value = "Save"
+                clearAllOrDeleteButton.value = "Delete All"
+            } else {
+                statusMessage.value = Event("Delete Error")
+            }
+
         }
     }
 
     fun update(subscriber: Subscriber) {
         viewModelScope.launch {
-            repository.update(subscriber)
-            inputEmail.value = null
-            inputName.value = null
-            isUpdateOrDelete = false
-            statusMessage.value = Event("Data Berhasil DiUpdate")
+            val noOfRow = repository.update(subscriber)
+            if (noOfRow > 0) {
+                inputEmail.value = null
+                inputName.value = null
+                isUpdateOrDelete = false
+                statusMessage.value = Event(" $noOfRow Data Berhasil DiUpdate")
 
-            saveOrUpdateButton.value = "Save"
-            clearAllOrDeleteButton.value = "Delete All"
+                saveOrUpdateButton.value = "Save"
+                clearAllOrDeleteButton.value = "Delete All"
+            } else {
+                statusMessage.value = Event("Error")
+            }
 
         }
     }
 
     fun clearAll() {
         viewModelScope.launch {
-            repository.deleteAll()
-            statusMessage.value = Event("Data Berhasil Dihapus semua")
+            val noOfRowDeleted = repository.deleteAll()
+            if (noOfRowDeleted > 0) {
+                statusMessage.value = Event("$noOfRowDeleted Data Berhasil Dihapus semua")
+            } else {
+                statusMessage.value = Event("Data Gagal Dihapus")
+            }
         }
     }
 

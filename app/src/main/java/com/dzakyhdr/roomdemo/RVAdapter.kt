@@ -9,9 +9,11 @@ import com.dzakyhdr.roomdemo.db.Subscriber
 import com.dzakyhdr.roomdemo.generated.callback.OnClickListener
 
 class RVAdapter(
-    private val subscriberList: List<Subscriber>,
     private val clickListener: (Subscriber) -> Unit
 ) : RecyclerView.Adapter<MyViewHolder>() {
+
+    private val subscriberList = ArrayList<Subscriber>()
+
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MyViewHolder {
         val layoutInflater = LayoutInflater.from(parent.context)
         val binding: ListItemBinding =
@@ -25,6 +27,11 @@ class RVAdapter(
 
     override fun getItemCount(): Int {
         return subscriberList.size
+    }
+
+    fun setList(subscriber: List<Subscriber>){
+        subscriberList.clear()
+        subscriberList.addAll(subscriber)
     }
 }
 
